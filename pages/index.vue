@@ -1,15 +1,18 @@
 <template>
   <div class="container flex">
     <OnlineUsers />
+    <Questions />
   </div>
 </template>
 
 <script>
 import OnlineUsers from '~/components/OnlineUsers'
+import Questions from '~/components/Questions/Questions'
 
 export default {
   components: {
-    OnlineUsers
+    OnlineUsers,
+    Questions
   }
 }
 </script>
