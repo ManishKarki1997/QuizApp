@@ -6,7 +6,8 @@ function state() {
         apiUrl: process.env.baseUrl,
         preferredColorScheme: 'light',
         onlineUsers: null,
-        gameQuestions: null
+        gameQuestions: null,
+        opponentDetails: null
     }
 }
 

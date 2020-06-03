@@ -7,6 +7,9 @@ const mutation = {
     setGameQuestions(state, questions) {
         state.gameQuestions = questions;
     },
+    setOpponentDetails(state, opponentDetails) {
+        state.opponentDetails = opponentDetails
+    }
 
 
 }

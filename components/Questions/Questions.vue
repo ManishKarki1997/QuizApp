@@ -1,6 +1,6 @@
 <template>
-  <div class="lg:w-3/4 px-6 py-2">
-    <div v-if="questions" class="w-full flex flex-col justify-start items-start">
+  <div class="lg:w-6/12 px-6 py-2">
+    <div v-if="!gameStarting && questions" class="w-full flex flex-col justify-start items-start">
       <h2 class="rounded bg-gray-700 px-2 text-white">{{questions.topic}}</h2>
       <div class="mt-6 w-full">
         <div class="text-center">
@@ -17,6 +17,9 @@
         </div>
       </div>
     </div>
+    <div v-else-if="!gameStarting && countdown>0">
+      <p>Game starting in {{countdown}} seconds.</p>
+    </div>
     <div v-else>
       <p>Click on a user to start the game.</p>
     </div>
@@ -30,7 +33,9 @@ export default {
       activeQuestionIndex: 0,
       selectedOption: '',
       selectedOptionCSS: ['text-white, bg-gray-500'],
-      questions: null
+      questions: null,
+      gameStarting: false,
+      countdown: 0
     }
   },
   methods: {
@@ -41,6 +46,22 @@ export default {
   sockets: {
     GAME_QUESTIONS(questions) {
       this.questions = questions
+    },
+    GAME_IN_SECONDS(seconds) {
+      this.gameStarting = true
+      this.countdown = seconds
+    }
+  },
+  watch: {
+    countdown: {
+      handler(value) {
+        if (value > 0) {
+          setTimeout(() => {
+            this.countdown--
+          }, 1000)
+          this.gameStarting = false
+        }
+      }
     }
   }
 }

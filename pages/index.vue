@@ -1,18 +1,26 @@
 <template>
-  <div class="container flex">
+  <div class="flex h-screen px-6 py-6 w-full">
     <OnlineUsers />
     <Questions />
+    <GameReport v-if="opponentDetails" />
   </div>
 </template>
 
 <script>
 import OnlineUsers from '~/components/OnlineUsers'
 import Questions from '~/components/Questions/Questions'
+import GameReport from '~/components/GameReport'
+
+import { mapGetters } from 'vuex'
 
 export default {
   components: {
     OnlineUsers,
-    Questions
+    Questions,
+    GameReport
+  },
+  computed: {
+    ...mapGetters(['opponentDetails'])
   }
 }
 </script>

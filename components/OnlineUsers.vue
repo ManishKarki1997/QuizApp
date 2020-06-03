@@ -1,5 +1,5 @@
 <template>
-  <div class="lg:w-1/4 md:w-full">
+  <div class="lg:w-3/12 md:w-full">
     <button
       :disabled="isLoggedIn"
       :class="[isLoggedIn ? 'bg-gray-700 cursor-not-allowed opacity-50' : 'bg-blue-500']"
@@ -24,12 +24,6 @@
     </div>
     <div v-else>
       <p>No Online Users</p>
-    </div>
-
-    <!-- opponent details -->
-    <div v-if="myOpponent">
-      <h3>{{myOpponent.name}}</h3>
-      <img :src="myOpponent.avatar" alt="Opponent Avatar" class="h-8 w-8 rounded-full" />
     </div>
   </div>
 </template>
@@ -93,18 +87,18 @@ export default {
       }
     },
     submitUsername(user) {
-      this.$socket.emit('SUBMIT_USERNAME', user)
+      this.$socket.emit('SUBMIT_USER_DETAILS', user)
     },
-    startGame(opponent) {
+    startGame(opponentDetails) {
       const roomName = uuidv4()
       this.$socket.emit('START_GAME', {
-        participant1: {
+        challenger: {
           socketId: this.mySocketId,
           ...this.user
         },
-        participant2: {
-          ...opponent,
-          socketId: opponent.socketId
+        opponent: {
+          ...opponentDetails,
+          socketId: opponentDetails.socketId
         },
         roomName
       })
@@ -119,7 +113,6 @@ export default {
       this.onlineUsers = onlineUsers
     },
     GAME_QUESTIONS(questions) {
-      console.log(questions)
       this.questions = questions
     },
     OPPONENT_DETAILS(opponent) {
@@ -127,8 +120,8 @@ export default {
       const myOpponentDetails = opponent.filter(
         opp => opp.email === this.user.email
       )
-      console.log(myOpponentDetails)
       this.myOpponent = myOpponentDetails[0]
+      this.$store.commit('setOpponentDetails', this.myOpponent)
     }
   },
   mounted() {
