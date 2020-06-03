@@ -1,8 +1,11 @@
 const mutation = {
-    setUser(state, { user, jwtToken }) {
+    setUser(state, { user, token }) {
         state.user = user;
-        state.jwtToken = state.jwtToken || jwtToken;
+        state.token = state.token || token;
         state.isLoggedIn = true;
+    },
+    setGameQuestions(state, questions) {
+        state.gameQuestions = questions;
     },
 
 

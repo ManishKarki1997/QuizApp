@@ -1,11 +1,12 @@
 function state() {
     return {
         user: {},
-        jwtToken: '',
+        token: '',
         isLoggedIn: false,
         apiUrl: process.env.baseUrl,
         preferredColorScheme: 'light',
-        onlineUsers: null
+        onlineUsers: null,
+        gameQuestions: null
     }
 }
 

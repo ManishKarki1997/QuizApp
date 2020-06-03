@@ -1,5 +1,7 @@
+import state from "./state"
+
 export default {
-    getOnlineUsers: (state) => {
-        return state.onlineUsers
-    },
+    getOnlineUsers: (state) => state.onlineUsers,
+    user: state => state.user,
+    isLoggedIn: state => state.isLoggedIn,
 }
