@@ -1,5 +1,5 @@
 <template>
-  <div class="flex h-screen px-6 py-6 w-full">
+  <div class="flex h-screen px-6 py-6 w-full overflow-hidden">
     <OnlineUsers />
     <Questions />
     <GameReport v-if="opponentDetails" />

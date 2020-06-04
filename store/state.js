@@ -7,7 +7,12 @@ function state() {
         preferredColorScheme: 'light',
         onlineUsers: null,
         gameQuestions: null,
-        opponentDetails: null
+        opponentDetails: null,
+        roomName: "",
+        userSocketId: '',
+        playerStatistics: null,
+        opponentStatistics: null,
+        miscGameDetails: null
     }
 }
 
