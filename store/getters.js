@@ -5,7 +5,7 @@ export default {
     user: state => state.user,
     isLoggedIn: state => state.isLoggedIn,
     opponentDetails: state => state.opponentDetails,
-    gameQuestions: state => state.gameQuestions,
+    gameQuestion: state => state.gameQuestion,
     roomName: state => state.roomName,
     userSocketId: state => state.userSocketId,
     playerStatistics: state => state.playerStatistics,

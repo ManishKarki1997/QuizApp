@@ -1,22 +1,22 @@
 <template>
   <div class="lg:w-8/12 px-6 py-2">
     <div
-      v-if="!gameStarting && gameQuestions"
+      v-if="!gameStarting && gameQuestion"
       class="w-full flex flex-col justify-start items-start"
     >
       <div class="w-full flex justify-between items-center">
-        <h2 class="rounded bg-gray-700 px-2 text-white">{{gameQuestions[0].categoryId.name}}</h2>
+        <h2 class="rounded bg-gray-700 px-2 text-white">{{gameQuestion.categoryId.name}}</h2>
         <p>{{answerCountdown}}</p>
       </div>
       <div class="mt-6 w-full">
         <div class="text-center">
-          <h3 class="text-2xl font-bold">{{gameQuestions[activeQuestionIndex].title}}</h3>
+          <h3 class="text-2xl font-bold">{{gameQuestion.title}}</h3>
           <div class="mt-12 grid grid-cols-12 row-gap-10 col-gap-8">
             <p
               @click="selectOption(option)"
               :class="[selectedOption===option ? selectedOptionCSS : 'text-teal-700']"
               class="text-lg col-span-6 bg-gray-200 px-2 py-3 rounded cursor-pointer hover:bg-gray-400 transition-all duration-75"
-              v-for="option in gameQuestions[activeQuestionIndex].options"
+              v-for="option in gameQuestion.options"
               :key="option"
             >{{option}}</p>
           </div>
@@ -43,11 +43,13 @@ export default {
       selectedOptionCSS: ['text-white, bg-gray-500'],
       gameStarting: false,
       countdown: 0,
-      answerCountdown: 17
+      answerCountdown: 17,
+      gameQuestion: null
     }
   },
   computed: {
-    ...mapGetters(['gameQuestions', 'user', 'roomName', 'playerStatistics'])
+    // 'gameQuestion',
+    ...mapGetters(['user', 'roomName', 'playerStatistics'])
   },
   methods: {
     selectOption(option) {
@@ -58,11 +60,12 @@ export default {
         questionIndex: this.activeQuestionIndex,
         answer: option
       })
+      this.activeQuestionIndex++
     }
   },
   sockets: {
-    GAME_QUESTIONS(questions) {
-      this.questions = questions
+    GAME_QUESTIONS(question) {
+      this.gameQuestion = question
     },
     GAME_IN_SECONDS(seconds) {
       this.gameStarting = true
@@ -78,6 +81,8 @@ export default {
       )
       this.$store.commit('setPlayerStatistics', player[0])
       this.$store.commit('setOpponentStatistics', opponent[0])
+
+      console.log(player[0])
 
       const toArrayValues = Object.values(data)
       const miscDetails = toArrayValues[toArrayValues.length - 1] // bad way of doing it

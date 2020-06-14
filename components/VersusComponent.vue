@@ -25,7 +25,9 @@
           ></div>
         </div>
         <p class="my-6">
-          <span class="text-2xl font-bold">{{totalQuestions - miscGameDetails.questionIndex + 1 }}</span> questions remaining
+          <span
+            class="text-2xl font-bold"
+          >{{totalQuestions - miscGameDetails.questionIndex.index + 1 }}</span> questions remaining
         </p>
         <div class="flex items-center flex-wrap lg:w-5/12 mx-auto">
           <div
