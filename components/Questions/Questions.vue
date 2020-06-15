@@ -44,33 +44,43 @@ export default {
       gameStarting: false,
       countdown: 0,
       answerCountdown: 17,
-      gameQuestion: null
+      gameQuestion: null,
+      alreadyClicked: false
     }
   },
   computed: {
     // 'gameQuestion',
-    ...mapGetters(['user', 'roomName', 'playerStatistics'])
+    ...mapGetters(['user', 'roomName', 'playerStatistics', 'miscGameDetails'])
   },
   methods: {
     selectOption(option) {
-      this.selectedOption = option
-      this.$socket.emit('GAME_MANAGER', {
-        answerer: this.user,
-        roomName: this.roomName,
-        questionIndex: this.activeQuestionIndex,
-        answer: option
-      })
-      this.activeQuestionIndex++
+      // make it so that user can't choose multiple options
+      if (!this.alreadyClicked) {
+        this.selectedOption = option
+        this.$socket.emit('GAME_MANAGER', {
+          answerer: this.user,
+          roomName: this.roomName,
+          questionIndex: this.activeQuestionIndex,
+          answer: option
+        })
+        this.activeQuestionIndex++
+      }
+      this.alreadyClicked = true
     }
   },
   sockets: {
     GAME_QUESTIONS(question) {
+      if (this.question !== question) {
+        this.answerCountdown = 17
+        this.answerCountdown--
+      }
       this.gameQuestion = question
+      this.alreadyClicked = false
     },
     GAME_IN_SECONDS(seconds) {
       this.gameStarting = true
       this.countdown = seconds
-      this.answerCountdown--
+      this.countdown--
     },
     ANSWER_RESULT(data) {
       const player = Object.values(data).filter(
@@ -82,11 +92,10 @@ export default {
       this.$store.commit('setPlayerStatistics', player[0])
       this.$store.commit('setOpponentStatistics', opponent[0])
 
-      console.log(player[0])
-
-      const toArrayValues = Object.values(data)
-      const miscDetails = toArrayValues[toArrayValues.length - 1] // bad way of doing it
-      this.$store.commit('setMiscGameDetails', miscDetails)
+      this.$store.commit('setMiscGameDetails', data.miscDetails)
+    },
+    GAME_OVER(gameRoomDetails) {
+      this.$store.commit('setMiscGameDetails', gameRoomDetails.miscDetails)
     }
   },
   watch: {
@@ -95,6 +104,8 @@ export default {
         setTimeout(() => {
           this.answerCountdown--
         }, 1000)
+      } else {
+        this.answerCountdown = 0
       }
     },
     countdown: {
@@ -107,16 +118,6 @@ export default {
         }
       }
     }
-    // answerCountdown: {
-    //   handler(value) {
-    //     console.log(value)
-    //     if (value > 0) {
-    //       setTimeout(() => {
-    //         this.answerCountdown--
-    //       }, 1000)
-    //     }
-    //   }
-    // }
   }
 }
 </script>

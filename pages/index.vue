@@ -3,6 +3,7 @@
     <OnlineUsers />
     <Questions />
     <GameReport v-if="opponentDetails" />
+    <GameOverModal @leaveGame="leaveGame" v-if="miscGameDetails && miscGameDetails.gameOver" />
   </div>
 </template>
 
@@ -10,6 +11,7 @@
 import OnlineUsers from '~/components/OnlineUsers'
 import Questions from '~/components/Questions/Questions'
 import GameReport from '~/components/GameReport'
+import GameOverModal from '~/components/GameOverModal'
 
 import { mapGetters } from 'vuex'
 
@@ -17,10 +19,25 @@ export default {
   components: {
     OnlineUsers,
     Questions,
-    GameReport
+    GameReport,
+    GameOverModal
+  },
+  data() {
+    return {
+      gameEnded: false
+    }
   },
   computed: {
-    ...mapGetters(['opponentDetails'])
+    ...mapGetters(['opponentDetails', 'miscGameDetails'])
+  },
+  methods: {
+    leaveGame() {
+      // reset all game information
+      this.$store.commit('setMiscGameDetails', {
+        ...this.miscGameDetails,
+        gameOver: false
+      })
+    }
   }
 }
 </script>

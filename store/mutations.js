@@ -25,6 +25,13 @@ const mutation = {
     },
     setMiscGameDetails(state, miscGameDetails) {
         state.miscGameDetails = miscGameDetails;
+    },
+    resetGame(state, payload) {
+        state.miscGameDetails = null;
+        state.playerStatistics = null;
+        state.opponentDetails = null;
+        state.gameQuestions = null;
+        state.roomName = null;
     }
 
 
