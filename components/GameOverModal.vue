@@ -1,7 +1,7 @@
 <template>
   <div
     id="game-over-modal"
-    class="px-8 py-4 rounded-md bg-gray-200 shadow-xl"
+    class="px-8 py-6 rounded-md bg-gray-200 shadow-xl"
     v-if="miscGameDetails"
   >
     <h2
@@ -16,7 +16,7 @@
 
     <h2 v-else class="text-center text-teal-600 font-bold text-4xl mb-2">You Lost</h2>
 
-    <div class="flex items-center justify-between w-full">
+    <div class="flex items-center justify-between w-full my-4">
       <div class="flex items-center">
         <img :src="playerStatistics.avatar" class="h-8 w-8 rounded-full mr-2" />
         <h3>{{playerStatistics.name}}</h3>

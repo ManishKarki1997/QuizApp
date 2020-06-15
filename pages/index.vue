@@ -1,8 +1,8 @@
 <template>
   <div class="flex h-screen px-6 py-6 w-full overflow-hidden">
-    <OnlineUsers />
-    <Questions />
-    <GameReport v-if="opponentDetails" />
+    <OnlineUsers class="flex-grow-0" />
+    <Questions class="flex-1" />
+    <GameReport class="flex-grow-0" v-if="opponentDetails" />
     <GameOverModal @leaveGame="leaveGame" v-if="miscGameDetails && miscGameDetails.gameOver" />
   </div>
 </template>

@@ -1,6 +1,6 @@
 <template>
   <div class="w-full py-4 h-full">
-    <div class="flex flex-col h-full justify-between" v-if="opponentDetails">
+    <div class="flex flex-col h-full justify-between">
       <!-- Player details -->
       <div>
         <img :src="user.avatar" alt="user avatar image" class="h-16 w-16 rounded-full mb-4 mx-auto" />
@@ -14,9 +14,10 @@
       </div>
 
       <!-- Game Statistics  -->
-      <div class="w-full py-2 px-2 my-4" v-if="playerStatistics && opponentStatistics">
-        <p class="mb-1">Your Points : {{playerStatistics.points}}</p>
-        <div class="flex items-center flex-wrap lg:w-5/12 mx-auto">
+      <div class="w-full py-2 px-2 my-4">
+        <p class="mb-1" v-if="playerStatistics">Your Points : {{playerStatistics.points}}</p>
+
+        <div class="flex items-center flex-wrap lg:w-5/12 mx-auto" v-if="playerStatistics">
           <div
             class="w-4 h-4 rounded-sm mr-2 mb-2"
             :class="[pattern==='W' ? 'bg-green-700' : 'bg-red-700']"
@@ -24,12 +25,13 @@
             :key="pattern + Math.random()*1000"
           ></div>
         </div>
-        <p class="my-6">
+
+        <p class="my-6" v-if="miscGameDetails">
           <span
             class="text-2xl font-bold"
-          >{{totalQuestions - miscGameDetails.questionIndex.index + 1 }}</span> questions remaining
+          >{{miscGameDetails.totalQuestions - miscGameDetails.questionIndex.index - 1 }}</span> questions remaining
         </p>
-        <div class="flex items-center flex-wrap lg:w-5/12 mx-auto">
+        <div class="flex items-center flex-wrap lg:w-5/12 mx-auto" v-if="opponentStatistics">
           <div
             class="w-4 h-4 rounded-sm mr-2 mb-2"
             :class="[pattern==='W' ? 'bg-green-700' : 'bg-red-700']"
@@ -38,11 +40,11 @@
           ></div>
         </div>
 
-        <p class="mt-1">Opponent's Points : {{opponentStatistics.points}}</p>
+        <p class="mt-1" v-if="opponentStatistics">Opponent's Points : {{opponentStatistics.points}}</p>
       </div>
 
       <!-- Opponent Details -->
-      <div>
+      <div v-if="opponentDetails">
         <img
           :src="opponentDetails.avatar"
           alt="opponent avatar image"
@@ -68,11 +70,6 @@
 import { mapGetters } from 'vuex'
 
 export default {
-  data() {
-    return {
-      totalQuestions: 8
-    }
-  },
   computed: {
     ...mapGetters([
       'opponentDetails',

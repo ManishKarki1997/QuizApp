@@ -13,10 +13,10 @@
           <h3 class="text-2xl font-bold">{{gameQuestion.title}}</h3>
           <div class="mt-12 grid grid-cols-12 row-gap-10 col-gap-8">
             <p
-              @click="selectOption(option)"
-              :class="[selectedOption===option ? selectedOptionCSS : 'text-teal-700']"
-              class="text-lg col-span-6 bg-gray-200 px-2 py-3 rounded cursor-pointer hover:bg-gray-400 transition-all duration-75"
-              v-for="option in gameQuestion.options"
+              @click="selectOption(option, index)"
+              :class="[(selectOptionIndex === index && selectedOption === correctAnswer) ? selectedOptionCSS : 'bg-gray-300']"
+              class="text-lg col-span-6 bg-gray-200 px-2 py-3 rounded cursor-pointer transition-all duration-75"
+              v-for="(option,index) in gameQuestion.options"
               :key="option"
             >{{option}}</p>
           </div>
@@ -40,12 +40,15 @@ export default {
     return {
       activeQuestionIndex: 0,
       selectedOption: '',
-      selectedOptionCSS: ['text-white, bg-gray-500'],
+      selectOptionIndex: '',
+      selectedOptionCSS: ['text-white, bg-green-600', 'hover:bg-green-700'],
       gameStarting: false,
       countdown: 0,
-      answerCountdown: 17,
+      answerCountdown: 0,
       gameQuestion: null,
-      alreadyClicked: false
+      alreadyClicked: false,
+      correctAnswer: '',
+      answerCountdownTimeout: null
     }
   },
   computed: {
@@ -53,10 +56,11 @@ export default {
     ...mapGetters(['user', 'roomName', 'playerStatistics', 'miscGameDetails'])
   },
   methods: {
-    selectOption(option) {
-      // make it so that user can't choose multiple options
+    selectOption(option, index) {
+      // make it so that user can't choose multiple options, multiple times for same question
       if (!this.alreadyClicked) {
         this.selectedOption = option
+        this.selectOptionIndex = index
         this.$socket.emit('GAME_MANAGER', {
           answerer: this.user,
           roomName: this.roomName,
@@ -70,17 +74,25 @@ export default {
   },
   sockets: {
     GAME_QUESTIONS(question) {
-      if (this.question !== question) {
-        this.answerCountdown = 17
-        this.answerCountdown--
-      }
+      this.correctAnswer = question.answer
+
+      // if the received question is not already present,
+      // new question has arrived.
+      // trigger the countdown
+      // if (this.question !== question) {
+      //   this.answerCountdown = 17
+      //   this.answerCountdown--
+      // }
       this.gameQuestion = question
       this.alreadyClicked = false
+      clearTimeout(this.answerCountdownTimeout)
+      this.answerCountdown = 17
     },
-    GAME_IN_SECONDS(seconds) {
+    GAME_IN_SECONDS(data) {
       this.gameStarting = true
-      this.countdown = seconds
+      this.countdown = data.gameCountdown
       this.countdown--
+      this.$store.commit('setMiscGameDetails', data.miscDetails)
     },
     ANSWER_RESULT(data) {
       const player = Object.values(data).filter(
@@ -95,17 +107,36 @@ export default {
       this.$store.commit('setMiscGameDetails', data.miscDetails)
     },
     GAME_OVER(gameRoomDetails) {
+      console.log(gameRoomDetails)
       this.$store.commit('setMiscGameDetails', gameRoomDetails.miscDetails)
     }
   },
   watch: {
     answerCountdown: function(val) {
       if (val > 0) {
-        setTimeout(() => {
+        this.answerCountdownTimeout = setTimeout(() => {
           this.answerCountdown--
         }, 1000)
       } else {
         this.answerCountdown = 0
+        // if the user has not already clicked an option
+        // warn the user and send 'null' as the answer
+        if (!this.alreadyClicked) {
+          this.$toast.open({
+            type: 'warning',
+            message: "Time's up!",
+            position: 'top-right',
+            duration: 1500
+          })
+          this.$socket.emit('GAME_MANAGER', {
+            answerer: this.user,
+            roomName: this.roomName,
+            questionIndex: this.activeQuestionIndex,
+            answer: null
+          })
+          this.activeQuestionIndex++
+          this.alreadyClicked = true
+        }
       }
     },
     countdown: {

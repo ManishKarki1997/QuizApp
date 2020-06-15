@@ -83,16 +83,26 @@ export default {
       this.$socket.emit('SUBMIT_USER_DETAILS', user)
     },
     startGame(opponentDetails) {
-      this.$socket.emit('START_GAME', {
-        challenger: {
-          socketId: this.userSocketId,
-          ...this.user
-        },
-        opponent: {
-          socketId: opponentDetails.socketId,
-          ...opponentDetails
-        }
-      })
+      if (opponentDetails.email !== this.user.email) {
+        this.$socket.emit('START_GAME', {
+          challenger: {
+            socketId: this.userSocketId,
+            ...this.user
+          },
+          opponent: {
+            socketId: opponentDetails.socketId,
+            ...opponentDetails
+          }
+        })
+      } else {
+        this.$toast.open({
+          type: 'warning',
+          message: "Uhh... you can't challenge yourself. Yet.",
+          position: 'top-right',
+          duration: 2500
+        })
+        return false
+      }
     }
   },
   sockets: {
