@@ -3,7 +3,11 @@
     <OnlineUsers class="flex-grow-0" />
     <Questions class="flex-1" />
     <GameReport class="flex-grow-0" v-if="opponentDetails" />
-    <GameOverModal @leaveGame="leaveGame" v-if="miscGameDetails && miscGameDetails.gameOver" />
+    <GameOverModal
+      @leaveGame="leaveGame"
+      @rematch="rematch"
+      v-if="miscGameDetails && miscGameDetails.gameOver"
+    />
   </div>
 </template>
 
@@ -28,15 +32,29 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['opponentDetails', 'miscGameDetails'])
+    ...mapGetters(['opponentDetails', 'miscGameDetails', 'roomName', 'user'])
   },
+
   methods: {
+    rematch() {
+      this.$socket.emit('START_GAME', {
+        challenger: {
+          socketId: this.userSocketId,
+          ...this.user
+        },
+        opponent: {
+          socketId: this.opponentDetails.socketId,
+          ...this.opponentDetails
+        }
+      })
+    },
     leaveGame() {
       // reset all game information
       this.$store.commit('setMiscGameDetails', {
         ...this.miscGameDetails,
         gameOver: false
       })
+      this.$socket.emit('PLAYER_LEFT_THE_GAME', this.roomName)
     }
   }
 }

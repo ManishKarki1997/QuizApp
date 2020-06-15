@@ -75,18 +75,16 @@ export default {
   sockets: {
     GAME_QUESTIONS(question) {
       this.correctAnswer = question.answer
-
-      // if the received question is not already present,
-      // new question has arrived.
-      // trigger the countdown
-      // if (this.question !== question) {
-      //   this.answerCountdown = 17
-      //   this.answerCountdown--
-      // }
       this.gameQuestion = question
       this.alreadyClicked = false
       clearTimeout(this.answerCountdownTimeout)
       this.answerCountdown = 17
+      this.$toast.open({
+        type: 'info',
+        message: 'Game has started!',
+        position: 'top-right',
+        duration: 1500
+      })
     },
     GAME_IN_SECONDS(data) {
       this.gameStarting = true
@@ -107,7 +105,6 @@ export default {
       this.$store.commit('setMiscGameDetails', data.miscDetails)
     },
     GAME_OVER(gameRoomDetails) {
-      console.log(gameRoomDetails)
       this.$store.commit('setMiscGameDetails', gameRoomDetails.miscDetails)
     }
   },

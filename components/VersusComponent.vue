@@ -26,10 +26,10 @@
           ></div>
         </div>
 
-        <p class="my-6" v-if="miscGameDetails">
+        <p class="my-6 bg-gray-300 rounded-md py-2" v-if="miscGameDetails">
           <span
             class="text-2xl font-bold"
-          >{{miscGameDetails.totalQuestions - miscGameDetails.questionIndex.index - 1 }}</span> questions remaining
+          >{{miscGameDetails.totalQuestions - miscGameDetails.questionIndex.index - 1 }}</span> question(s) remaining
         </p>
         <div class="flex items-center flex-wrap lg:w-5/12 mx-auto" v-if="opponentStatistics">
           <div

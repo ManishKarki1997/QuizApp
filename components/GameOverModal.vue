@@ -36,7 +36,10 @@
       </div>
     </div>
     <div class="w-1/2 mx-auto flex items-center justify-between">
-      <button class="bg-teal-600 hover:bg-teal-700 text-white rounded-sm px-2 py-1">Play Again</button>
+      <button
+        @click="rematch"
+        class="bg-teal-600 hover:bg-teal-700 text-white rounded-sm px-2 py-1"
+      >Play Again</button>
       <button
         @click="leaveGame"
         class="bg-red-600 hover:bg-red-700 text-white rounded-sm px-2 py-1"
@@ -60,6 +63,9 @@ export default {
   methods: {
     leaveGame() {
       this.$emit('leaveGame')
+    },
+    rematch() {
+      this.$emit('rematch')
     }
   }
 }
