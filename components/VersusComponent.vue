@@ -26,7 +26,10 @@
           ></div>
         </div>
 
-        <p class="my-6 bg-gray-300 rounded-md py-2" v-if="miscGameDetails">
+        <p
+          class="my-6 bg-gray-300 rounded-md py-2 dark:bg-gray-900 dark:text-gray-300"
+          v-if="miscGameDetails"
+        >
           <span
             class="text-2xl font-bold"
           >{{miscGameDetails.totalQuestions - miscGameDetails.questionIndex.index - 1 }}</span> question(s) remaining
@@ -44,7 +47,7 @@
       </div>
 
       <!-- Opponent Details -->
-      <div v-if="opponentDetails">
+      <div v-if="opponentDetails" class="dark:text-gray-300">
         <img
           :src="opponentDetails.avatar"
           alt="opponent avatar image"
@@ -59,7 +62,9 @@
         </p>
 
         <div class="w-full my-2">
-          <button class="px-4 py-1 rounded-sm bg-green-500 cursor-pointer text-white">Add Friend</button>
+          <button
+            class="px-4 py-1 rounded-sm bg-green-500 cursor-pointer text-white dark:bg-black dark-hover:bg-gray-800 dark:text-gray-300 dark:border-white border"
+          >Add Friend</button>
         </div>
       </div>
     </div>

@@ -5,7 +5,9 @@
       class="w-full flex flex-col justify-start items-start"
     >
       <div class="w-full flex justify-between items-center">
-        <h2 class="rounded bg-gray-700 px-2 text-white">{{gameQuestion.categoryId.name}}</h2>
+        <h2
+          class="rounded bg-gray-700 dark:bg-gray-900 dark:text-gray-300 px-2 text-white"
+        >{{gameQuestion.categoryId.name}}</h2>
         <p>{{answerCountdown}}</p>
       </div>
       <div class="mt-6 w-full">
@@ -15,7 +17,7 @@
             <p
               @click="selectOption(option, index)"
               :class="[(selectOptionIndex === index && selectedOption === correctAnswer) ? selectedOptionCSS : 'bg-gray-300']"
-              class="text-lg col-span-6 bg-gray-200 px-2 py-3 rounded cursor-pointer transition-all duration-75"
+              class="text-lg col-span-6 bg-gray-200 px-2 py-3 rounded cursor-pointer transition-all duration-75 dark:bg-gray-900 dark-hover:bg-gray-800 dark:text-gray-300"
               v-for="(option,index) in gameQuestion.options"
               :key="option"
             >{{option}}</p>
@@ -44,7 +46,7 @@ export default {
       selectedOptionCSS: ['text-white, bg-green-600', 'hover:bg-green-700'],
       gameStarting: false,
       countdown: 0,
-      answerCountdown: 0,
+      answerCountdown: 17,
       gameQuestion: null,
       alreadyClicked: false,
       correctAnswer: '',
@@ -79,18 +81,18 @@ export default {
       this.alreadyClicked = false
       clearTimeout(this.answerCountdownTimeout)
       this.answerCountdown = 17
-      this.$toast.open({
-        type: 'info',
-        message: 'Game has started!',
-        position: 'top-right',
-        duration: 1500
-      })
     },
     GAME_IN_SECONDS(data) {
       this.gameStarting = true
       this.countdown = data.gameCountdown
       this.countdown--
       this.$store.commit('setMiscGameDetails', data.miscDetails)
+      this.$toast.open({
+        type: 'info',
+        message: 'Game has started!',
+        position: 'top-right',
+        duration: 1500
+      })
     },
     ANSWER_RESULT(data) {
       const player = Object.values(data).filter(

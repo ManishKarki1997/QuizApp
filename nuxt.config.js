@@ -39,6 +39,7 @@ export default {
   buildModules: [
     // Doc: https://github.com/nuxt-community/nuxt-tailwindcss
     '@nuxtjs/tailwindcss',
+    '@nuxtjs/color-mode'
   ],
   /*
   ** Nuxt.js modules
@@ -49,6 +50,7 @@ export default {
     '@nuxtjs/pwa',
     // Doc: https://github.com/nuxt-community/dotenv-module
     '@nuxtjs/dotenv',
+    'nuxt-purgecss',
   ],
   /*
   ** Axios module configuration
@@ -68,5 +70,8 @@ export default {
   },
   env: {
     baseUrl: process.env.baseUrl || 'http://localhost:4000'
+  },
+  purgeCSS: {
+    whitelist: ['dark-mode'],
   }
 }

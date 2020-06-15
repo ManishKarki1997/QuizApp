@@ -2,10 +2,14 @@
   <div class="lg:w-2/12 md:w-full">
     <button
       :disabled="isLoggedIn"
-      :class="[isLoggedIn ? 'bg-gray-700 cursor-not-allowed opacity-50' : 'bg-blue-500']"
-      class="mb-4 rounded-sm px-4 text-white cursor-pointer"
+      :class="[isLoggedIn ? 'bg-gray-700 dark:bg-gray-900 dark:text-gray-300 cursor-not-allowed opacity-50 dark:opacity-100' : 'bg-blue-500']"
+      class="mb-4 mr-2 rounded-sm px-4 text-white cursor-pointer"
       @click="loginWithGoogle"
     >Login</button>
+    <button
+      @click="toggleTheme"
+      class="dark:bg-gray-900 dark:text-gray-300 px-4 rounded-sm dark:border-white border"
+    >Toggle Theme</button>
     <div v-if="onlineUsers">
       <h2 class="text-xl font-bold mb-2">Online Users</h2>
       <ul
@@ -15,7 +19,7 @@
       >
         <li
           @click="startGame(user)"
-          class="flex items-center px-2 py-2 mb-4 rounded cursor-pointer transition-all duration-100 bg-gray-300 hover:bg-gray-400"
+          class="flex items-center px-2 py-2 mb-4 rounded cursor-pointer transition-all duration-100 bg-gray-300 hover:bg-gray-400 dark:bg-gray-900 dark-hover:bg-gray-800 dark:text-gray-300"
         >
           <img :src="user.avatar" class="h-6 w-6 rounded-lg" />
           <p class="ml-2">{{user.name}}</p>
@@ -103,6 +107,10 @@ export default {
         })
         return false
       }
+    },
+    toggleTheme() {
+      this.$colorMode.preference =
+        this.$colorMode.value === 'light' ? 'dark' : 'light'
     }
   },
   sockets: {
