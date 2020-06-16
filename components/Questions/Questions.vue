@@ -36,6 +36,7 @@
 
 <script>
 import { mapGetters } from 'vuex'
+import Noty from 'noty'
 
 export default {
   data() {
@@ -81,18 +82,26 @@ export default {
       this.alreadyClicked = false
       clearTimeout(this.answerCountdownTimeout)
       this.answerCountdown = 17
+      this.answerCountdown--
     },
     GAME_IN_SECONDS(data) {
       this.gameStarting = true
       this.countdown = data.gameCountdown
       this.countdown--
       this.$store.commit('setMiscGameDetails', data.miscDetails)
-      this.$toast.open({
+
+      new Noty({
         type: 'info',
-        message: 'Game has started!',
-        position: 'top-right',
-        duration: 1500
-      })
+        text: 'Game has started!',
+        timeout: 1500
+      }).show()
+
+      // this.$toast.open({
+      //   type: 'info',
+      //   message: 'Game has started!',
+      //   position: 'top-right',
+      //   duration: 1500
+      // })
     },
     ANSWER_RESULT(data) {
       const player = Object.values(data).filter(
@@ -121,12 +130,18 @@ export default {
         // if the user has not already clicked an option
         // warn the user and send 'null' as the answer
         if (!this.alreadyClicked) {
-          this.$toast.open({
+          new Noty({
             type: 'warning',
-            message: "Time's up!",
-            position: 'top-right',
-            duration: 1500
-          })
+            text: "Time's up!",
+            timeout: 1500
+          }).show()
+
+          // this.$toast.open({
+          //   type: 'warning',
+          //   message: "Time's up!",
+          //   position: 'top-right',
+          //   duration: 1500
+          // })
           this.$socket.emit('GAME_MANAGER', {
             answerer: this.user,
             roomName: this.roomName,

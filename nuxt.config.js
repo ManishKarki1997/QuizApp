@@ -31,7 +31,7 @@ export default {
   plugins: [
     '~/plugins/VueSocket.js',
     '~/plugins/VueGoogle.js',
-    '~/plugins/VueToast.js',
+    '~/plugins/VueNoty.js',
   ],
   /*
   ** Nuxt.js dev-modules

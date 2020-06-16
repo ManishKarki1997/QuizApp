@@ -1,7 +1,7 @@
 <template>
   <div
     id="game-over-modal"
-    class="px-8 py-6 rounded-md bg-gray-200 shadow-xl"
+    class="px-8 py-6 rounded-md bg-gray-200 dark:bg-gray-800 dark:text-gray-300 shadow-xl"
     v-if="miscGameDetails"
   >
     <h2
@@ -23,12 +23,12 @@
       </div>
       <div class="flex items-center mx-8">
         <h3
-          class="mr-2 font-bold text-4xl"
+          class="font-bold text-4xl"
           :class="{'text-red-600':miscGameDetails.gameWonBy && miscGameDetails.gameWonBy.email !== user.email,
           'text-teal-600':miscGameDetails.gameWonBy && miscGameDetails.gameWonBy.email === user.email}"
         >{{playerStatistics.points}}</h3>
-        <h3 class="text-2xl">-</h3>
-        <h3 class="ml-2 font-bold text-4xl">{{opponentStatistics.points}}</h3>
+        <h3 class="text-2xl mx-1">-</h3>
+        <h3 class="font-bold text-4xl">{{opponentStatistics.points}}</h3>
       </div>
       <div class="flex items-center">
         <img :src="opponentStatistics.avatar" class="h-8 w-8 rounded-full mr-2" />
