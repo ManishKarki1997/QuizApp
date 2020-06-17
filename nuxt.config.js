@@ -5,7 +5,7 @@ export default {
   ** Headers of the page
   */
   head: {
-    title: process.env.npm_package_name || '',
+    title: process.env.npm_package_name || 'Quiz App',
     meta: [
       { charset: 'utf-8' },
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
@@ -69,7 +69,8 @@ export default {
     }
   },
   env: {
-    baseUrl: process.env.baseUrl || 'http://localhost:4000'
+    baseUrl: process.env.baseUrl || 'http://localhost:4000',
+    
   },
   purgeCSS: {
     whitelist: ['dark-mode'],

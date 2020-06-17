@@ -16,6 +16,7 @@ export default ({ app: { store, router } }) => {
 
     Vue.use(new VueSocketIO({
         debug: false,
+        // connection: "https://multiplayer-quiz-server.herokuapp.com/",
         connection: process.env.baseUrl,
         // vuex: {
         //     store,
