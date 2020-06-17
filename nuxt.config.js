@@ -1,3 +1,5 @@
+require('dotenv').config()
+
 
 export default {
   mode: 'spa',
@@ -51,6 +53,7 @@ export default {
     // Doc: https://github.com/nuxt-community/dotenv-module
     '@nuxtjs/dotenv',
     'nuxt-purgecss',
+    
   ],
   /*
   ** Axios module configuration
@@ -70,7 +73,6 @@ export default {
   },
   env: {
     baseUrl: process.env.baseUrl || 'http://localhost:4000',
-    
   },
   purgeCSS: {
     whitelist: ['dark-mode'],
