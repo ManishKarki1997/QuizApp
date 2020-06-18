@@ -97,7 +97,7 @@ export default {
   },
   computed: {
     // 'gameQuestion',
-    ...mapGetters(['user', 'roomName', 'playerStatistics', 'miscGameDetails'])
+    ...mapGetters(['user', 'roomName', 'playerStatistics', 'miscGameDetails', 'isInAGame'])
   },
   methods: {
     showRound(){
@@ -111,11 +111,13 @@ export default {
       if (!this.alreadyClicked) {
         if(option !== this.correctAnswer){
           // note
-          // if done by giviing the correct answer a certain class and using document.querySelector,
+          // if done by giving the correct answer a certain class and using document.querySelector,
           // one can easily find out the answer by inspecting the element and finding the option with the class of correctAnswer
           const correctAnswerIndex = this.gameQuestion.options.findIndex(opt=>opt === this.correctAnswer)
-          document.querySelector( `.option${index}`).classList.add("bg-red-400");        
-          document.querySelector(`.answer${correctAnswerIndex}`).classList.add('bg-green-600');
+          document.querySelector( `.option${index}`).classList.add("bg-red-400");
+           // in case the options does not contain the answer; server should prevent it; but, just in case
+          if(correctAnswerIndex!==-1)        
+            document.querySelector(`.answer${correctAnswerIndex}`).classList.add('bg-green-600');
         }
         this.selectedOption = option
         this.selectOptionIndex = index
@@ -148,7 +150,7 @@ export default {
       this.$store.commit('setMiscGameDetails', data.miscDetails)
       this.roundAlertDiv = document.querySelector('.round-alert')
       this.showRound()
-
+      this.$store.commit('setIsInAGame', true)
 
       new Noty({
         type: 'info',

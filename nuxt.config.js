@@ -78,6 +78,7 @@ export default {
   env: {
     // baseUrl: "https://multiplayer-quiz-server.herokuapp.com/",
     baseUrl: process.env.baseUrl || 'http://localhost:4000',
+    baseUrl:'http://localhost:4000',
   },
   purgeCSS: {
     whitelist: ['dark-mode'],

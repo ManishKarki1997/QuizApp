@@ -47,6 +47,7 @@ export default {
           ...this.opponentDetails
         }
       })
+      this.$store.commit('setIsInAGame', true)
     },
     leaveGame() {
       // reset all game information
@@ -55,6 +56,8 @@ export default {
         gameOver: false
       })
       this.$socket.emit('PLAYER_LEFT_THE_GAME', this.roomName)
+      this.$store.commit('setIsInAGame', false)
+
     }
   }
 }

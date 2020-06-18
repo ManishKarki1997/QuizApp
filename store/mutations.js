@@ -17,6 +17,9 @@ const mutation = {
     setRoomName(state, roomName) {
         state.roomName = roomName;
     },
+    setIsInAGame(state,value){
+        state.isInAGame = value
+    },
     setPlayerStatistics(state, stats) {
         state.playerStatistics = stats;
     },

@@ -58,7 +58,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['isLoggedIn', 'user', 'userSocketId', 'isLoggedIn'])
+    ...mapGetters(['isLoggedIn', 'user', 'userSocketId', 'isLoggedIn', 'isInAGame'])
   },
   methods: {
     async loginWithGoogle() {
@@ -123,7 +123,15 @@ export default {
           timeout: 1500
         }).show()
         return;
-      } 
+      }else if(this.isInAGame){
+         new Noty({
+          // theme: this.$colorMode.value === 'light' ? 'relax' : 'sunset',
+          type: 'error',
+          text: "Please finish the current game to start a new one.",
+          timeout: 1500
+        }).show()
+        return;
+      }
 
       if (opponentDetails.email !== this.user.email) {
         this.$socket.emit('CHALLENGE_USER', {
