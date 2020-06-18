@@ -16,7 +16,7 @@
           <div class="mt-12 grid grid-cols-12 row-gap-10 col-gap-8">
             <p
               @click="selectOption(option, index)"
-              :class="[(selectOptionIndex === index && selectedOption === correctAnswer) ? selectedOptionCSS : 'bg-gray-300']"
+              :class="[(selectOptionIndex === index && selectedOption === correctAnswer) ? selectedOptionCSS : 'bg-gray-300', `option${index}`, `answer${index}`]"
               class="text-lg col-span-6 bg-gray-200 px-2 py-3 rounded cursor-pointer transition-all duration-75 dark:bg-gray-900 dark-hover:bg-gray-800 dark:text-gray-300"
               v-for="(option,index) in gameQuestion.options"
               :key="option"
@@ -109,6 +109,14 @@ export default {
     selectOption(option, index) {
       // make it so that user can't choose multiple options, multiple times for same question
       if (!this.alreadyClicked) {
+        if(option !== this.correctAnswer){
+          // note
+          // if done by giviing the correct answer a certain class and using document.querySelector,
+          // one can easily find out the answer by inspecting the element and finding the option with the class of correctAnswer
+          const correctAnswerIndex = this.gameQuestion.options.findIndex(opt=>opt === this.correctAnswer)
+          document.querySelector( `.option${index}`).classList.add("bg-red-400");        
+          document.querySelector(`.answer${correctAnswerIndex}`).classList.add('bg-green-600');
+        }
         this.selectedOption = option
         this.selectOptionIndex = index
         this.$socket.emit('GAME_MANAGER', {
