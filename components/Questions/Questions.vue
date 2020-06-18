@@ -31,8 +31,39 @@
     <div v-else>
       <p>Click on a user to start the game.</p>
     </div>
+
+    <div class="round-alert rounded-md text-center shadow-lg  dark:bg-gray-900 dark:text-gray-300 bg-white w-6/12 mx-auto px-8 py-12">
+      <h2 v-if="miscGameDetails" class="text-4xl font-bold text-gray-800 dark:text-white">Round {{miscGameDetails.questionIndex.index + 1}}</h2>
+    </div>
   </div>
 </template>
+
+
+<style scoped>
+.round-alert{
+  position:absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%,-50%);
+  opacity: 0;
+}
+
+.fade-in{
+  animation: fade 2s ease-in-out;
+}
+
+@keyframes fade{
+  0%{
+    opacity: 0;
+  }
+  40%{
+    opacity: 1;
+  }
+  100%{
+    opacity: 0;
+  }
+}
+</style>
 
 <script>
 import { mapGetters } from 'vuex'
@@ -60,7 +91,8 @@ export default {
       gameQuestion: null,
       alreadyClicked: false,
       correctAnswer: '',
-      answerCountdownTimeout: null
+      answerCountdownTimeout: null,
+      roundAlertDiv:null
     }
   },
   computed: {
@@ -68,6 +100,12 @@ export default {
     ...mapGetters(['user', 'roomName', 'playerStatistics', 'miscGameDetails'])
   },
   methods: {
+    showRound(){
+      this.roundAlertDiv.classList.add('fade-in');
+      setTimeout(()=>{
+      this.roundAlertDiv.classList.remove('fade-in');
+      },2000)
+    },
     selectOption(option, index) {
       // make it so that user can't choose multiple options, multiple times for same question
       if (!this.alreadyClicked) {
@@ -92,12 +130,17 @@ export default {
       clearTimeout(this.answerCountdownTimeout)
       this.answerCountdown = 17
       this.answerCountdown--
+      this.showRound()
+
     },
     GAME_IN_SECONDS(data) {
       this.gameStarting = true
       this.countdown = data.gameCountdown
       this.countdown--
       this.$store.commit('setMiscGameDetails', data.miscDetails)
+      this.roundAlertDiv = document.querySelector('.round-alert')
+      this.showRound()
+
 
       new Noty({
         type: 'info',
@@ -172,7 +215,7 @@ export default {
         }
       }
     }
-  }
+  },
 }
 </script>
 

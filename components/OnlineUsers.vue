@@ -122,6 +122,7 @@ export default {
           text: "You need to login first. ",
           timeout: 1500
         }).show()
+        return;
       } 
 
       if (opponentDetails.email !== this.user.email) {
