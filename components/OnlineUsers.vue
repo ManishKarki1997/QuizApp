@@ -36,6 +36,18 @@
 <script>
 import { mapGetters } from 'vuex'
 import Noty from 'noty'
+// import 'vuejs-noty/dist/vuejs-noty.css'
+
+import 'noty/lib/noty.css'
+
+// import 'noty/lib/themes/mint.css'
+// import 'noty/lib/themes/relax.css'
+// import 'noty/lib/themes/sunset.css'
+// import 'noty/lib/themes/light.css'
+
+
+
+
 
 export default {
   data() {
@@ -46,7 +58,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['isLoggedIn', 'user', 'userSocketId'])
+    ...mapGetters(['isLoggedIn', 'user', 'userSocketId', 'isLoggedIn'])
   },
   methods: {
     async loginWithGoogle() {
@@ -65,7 +77,7 @@ export default {
       const response = await this.$store.dispatch('login', user)
       if (response.data.error) {
         new Noty({
-          theme: this.$colorMode.value === 'light' ? 'relax' : 'sunset',
+          // theme: this.$colorMode.value === 'light' ? 'relax' : 'sunset',
           type: 'error',
           text: response.data.message,
           timeout: 1500
@@ -83,7 +95,7 @@ export default {
           user: response.data.payload.user
         })
         new Noty({
-          theme: this.$colorMode.value === 'light' ? 'relax' : 'sunset',
+          // theme: this.$colorMode.value === 'light' ? 'relax' : 'sunset',
 
           type: 'success',
           text: response.data.message,
@@ -103,14 +115,23 @@ export default {
       this.$socket.emit('SUBMIT_USER_DETAILS', user)
     },
     challengeUser(opponentDetails) {
+      if(!this.isLoggedIn){
+        new Noty({
+          // theme: this.$colorMode.value === 'light' ? 'relax' : 'sunset',
+          type: 'error',
+          text: "You need to login first. ",
+          timeout: 1500
+        }).show()
+      } 
+
       if (opponentDetails.email !== this.user.email) {
         this.$socket.emit('CHALLENGE_USER', {
           challengedBy: this.user,
           challengedTo: opponentDetails
         })
-      } else {
+      }else {
         new Noty({
-          theme: this.$colorMode.value === 'light' ? 'relax' : 'sunset',
+          // theme: this.$colorMode.value === 'light' ? 'relax' : 'sunset',
           type: 'error',
           text: "Uhh... You can't challenge yourself. ",
           timeout: 1500
@@ -131,7 +152,7 @@ export default {
         })
       } else {
         new Noty({
-          theme: this.$colorMode.value === 'light' ? 'relax' : 'sunset',
+          // theme: this.$colorMode.value === 'light' ? 'relax' : 'sunset',
 
           type: 'warning',
           text: "You can't challenge yourself. Not yet.",
@@ -165,7 +186,7 @@ export default {
       // a notification promp modal to accept or reject the challenge.
       const that = this
       const n = new Noty({
-        theme: this.$colorMode.value === 'light' ? 'relax' : 'sunset',
+        // theme: this.$colorMode.value === 'light' ? 'relax' : 'sunset',
         text: `
           <div class="px-4 py-2 rounded-sm">
             <div class="flex items-center">
@@ -208,7 +229,7 @@ export default {
       if (type === 'REJECTION') {
         // notify that the challenge has been rejected.
         new Noty({
-          theme: this.$colorMode.value === 'light' ? 'relax' : 'sunset',
+          // theme: this.$colorMode.value === 'light' ? 'relax' : 'sunset',
           type: 'info',
           text: `<strong>${challengedTo.name}</strong> has rejected your challenge.`,
           timeout: 3500
@@ -216,7 +237,7 @@ export default {
       } else if (type === 'ACCEPTATION') {
         // notify that the challenge has been accepted.
         new Noty({
-          theme: this.$colorMode.value === 'light' ? 'relax' : 'sunset',
+          // theme: this.$colorMode.value === 'light' ? 'relax' : 'sunset',
           type: 'success',
           text: `<strong>${challengedTo.name}</strong> has accepted your challenge.`,
           timeout: 1500

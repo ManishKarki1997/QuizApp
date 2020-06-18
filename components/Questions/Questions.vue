@@ -37,6 +37,15 @@
 <script>
 import { mapGetters } from 'vuex'
 import Noty from 'noty'
+import 'noty/lib/noty.css'
+
+// import 'noty/lib/themes/mint.css'
+// import 'noty/lib/themes/relax.css'
+// import 'noty/lib/themes/sunset.css'
+// import 'noty/lib/themes/light.css'
+
+
+
 
 export default {
   data() {
@@ -166,3 +175,4 @@ export default {
   }
 }
 </script>
+

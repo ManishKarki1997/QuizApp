@@ -15,6 +15,7 @@ export default {
     ],
     link: [
       { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
+      { rel: 'stylesheet', href: 'https://cdnjs.cloudflare.com/ajax/libs/noty/3.2.0-beta/noty.css' },
       { ref: 'stylesheet', href: "https://fonts.googleapis.com/css2?family=Karla:ital,wght@0,400;0,700;1,400;1,700&display=swap" }
     ]
   },
@@ -41,7 +42,8 @@ export default {
   buildModules: [
     // Doc: https://github.com/nuxt-community/nuxt-tailwindcss
     '@nuxtjs/tailwindcss',
-    '@nuxtjs/color-mode'
+    // '@nuxtjs/color-mode',
+    
   ],
   /*
   ** Nuxt.js modules
@@ -53,6 +55,8 @@ export default {
     // Doc: https://github.com/nuxt-community/dotenv-module
     '@nuxtjs/dotenv',
     'nuxt-purgecss',
+    '@nuxtjs/color-mode'
+
     
   ],
   /*
@@ -72,9 +76,11 @@ export default {
     }
   },
   env: {
+    // baseUrl: "https://multiplayer-quiz-server.herokuapp.com/",
     baseUrl: process.env.baseUrl || 'http://localhost:4000',
   },
   purgeCSS: {
     whitelist: ['dark-mode'],
-  }
+  },
+
 }

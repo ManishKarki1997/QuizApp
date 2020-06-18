@@ -6,7 +6,7 @@ import SocketIO from "socket.io-client"
 
 
 export default ({ app: { store, router } }) => {
-    const socket = SocketIO('http://localhost:4000');
+    // const socket = SocketIO('http://localhost:4000');
 
     // socket.on('connect', () => {
     //     store.commit('setUserSocketId', socket.id);
@@ -16,7 +16,7 @@ export default ({ app: { store, router } }) => {
 
     Vue.use(new VueSocketIO({
         debug: false,
-        // connection: "https://multiplayer-quiz-server.herokuapp.com/",
+        // connection: "https://multiplayer-quiz-server.herokuapp.com",
         connection: process.env.baseUrl,
         // vuex: {
         //     store,
