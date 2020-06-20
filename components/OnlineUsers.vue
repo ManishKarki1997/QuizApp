@@ -2,14 +2,22 @@
   <div class="lg:w-2/12 md:w-full">
     <button
       :disabled="isLoggedIn"
-      :class="[isLoggedIn ? 'bg-gray-700 dark:bg-gray-900 dark:text-gray-300 cursor-not-allowed opacity-50 dark:opacity-100' : 'bg-blue-500']"
+      :class="[
+        isLoggedIn
+          ? 'bg-gray-700 dark:bg-gray-900 dark:text-gray-300 cursor-not-allowed opacity-50 dark:opacity-100'
+          : 'bg-blue-500'
+      ]"
       class="mb-4 mr-2 rounded-sm px-4 text-white cursor-pointer"
       @click="loginWithGoogle"
-    >Login</button>
+    >
+      Login
+    </button>
     <button
       @click="toggleTheme"
       class="dark:bg-gray-900 dark:text-gray-300 px-4 rounded-sm dark:border-white border"
-    >Toggle Theme</button>
+    >
+      Toggle Theme
+    </button>
     <div v-if="onlineUsers">
       <h2 class="text-xl font-bold mb-2">Online Users</h2>
       <ul
@@ -17,21 +25,71 @@
         :key="user.socketId"
         class="flex flex-col w-full"
       >
-        <!--   @click="startGame(user)" -->
+        <!-- @click="challengeUser(user)" -->
+
         <li
-          @click="challengeUser(user)"
+          @click="chooseGameOptions(user)"
           class="flex items-center px-2 py-2 mb-4 rounded cursor-pointer transition-all duration-100 bg-gray-300 hover:bg-gray-400 dark:bg-gray-900 dark-hover:bg-gray-800 dark:text-gray-300"
         >
           <img :src="user.avatar" class="h-6 w-6 rounded-lg" />
-          <p class="ml-2">{{user.name}}</p>
+          <p class="ml-2">{{ user.name }}</p>
         </li>
       </ul>
     </div>
     <div v-else>
       <p>No Online Users</p>
     </div>
+
+    <!-- choose game options modal -->
+    <div
+      v-if="showChooseGameOptionsModal"
+      class="dark:bg-gray-900 dark:text-white w-1/4 bg-white shadow-md px-8 py-4 rounded-md game-options-modal"
+    >
+      <div class="flex items-center justify-between">
+        <label>Category</label>
+        <select
+          name="category_select"
+          id="category_select"
+          class="dark:text-white dark:bg-black px-4 py-1 rounded-sm"
+          v-on:change="categorySelected"
+        >
+          <option v-for="category in categories" :key="category._id">{{
+            category.name
+          }}</option>
+        </select>
+      </div>
+
+      <div class="w-full mt-6 flex justify-between items-center">
+        <div>
+          <button
+            @click="challengeUser(false)"
+            class="rounded-sm mr-4 px-2 dark:bg-gray-900 dark:text-white border border-gray-900 cursor-pointer"
+          >
+            Challenge
+          </button>
+          <button @click="challengeUser(true)" bg-blue-300>
+            Random Category
+          </button>
+        </div>
+        <buton
+          class="text-sm cursor-pointer dark:text-white"
+          @click="showChooseGameOptionsModal = false"
+        >
+          Close</buton
+        >
+      </div>
+    </div>
   </div>
 </template>
+
+<style scoped>
+.game-options-modal {
+  position: absolute;
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+</style>
 
 <script>
 import { mapGetters } from 'vuex'
@@ -45,33 +103,76 @@ import 'noty/lib/noty.css'
 // import 'noty/lib/themes/sunset.css'
 // import 'noty/lib/themes/light.css'
 
-
-
-
-
 export default {
   data() {
     return {
       tempUsernames: ['StarScream', 'Vox', 'Skye', 'Catherine', 'Celeste'],
       onlineUsers: null,
-      myOpponent: null
+      myOpponent: null,
+      categories: [],
+      showChooseGameOptionsModal: false,
+      opponentToChallenge: null,
+      totalAvailableQuestionsCount: '',
+      totalQuestionsCount: '',
+      randomCategory: false,
+      gameOptions: {
+        category: null
+      }
     }
   },
   computed: {
-    ...mapGetters(['isLoggedIn', 'user', 'userSocketId', 'isLoggedIn', 'isInAGame'])
+    ...mapGetters([
+      'isLoggedIn',
+      'user',
+      'userSocketId',
+      'isLoggedIn',
+      'isInAGame'
+    ])
   },
   methods: {
+    categorySelected(e) {
+      const selectedCategoryName = e.target.value
+      const selectedCategory = this.categories.filter(
+        cat => cat.name === selectedCategoryName
+      )
+      this.gameOptions.category = selectedCategory[0]
+    },
+    chooseGameOptions(user) {
+      this.opponentToChallenge = user
+      this.showChooseGameOptionsModal = true
+    },
+    async fetchCategories() {
+      const response = await this.$store.dispatch('fetchCategories')
+      if (response.data.error) {
+        new Noty({
+          // theme: this.$colorMode.value === 'light' ? 'relax' : 'sunset',
+          type: 'error',
+          text: response.data.message,
+          timeout: 1500
+        }).show()
+        return false
+      } else {
+        const { categories } = response.data.payload
+        this.categories = categories
+        this.gameOptions.category = categories[0]
+      }
+    },
     async loginWithGoogle() {
       if (this.isLoggedIn) {
         this.submitUsername(this.user)
         return false
       }
       const googleRes = await this.$gAuth.signIn()
+      const userInfo = googleRes.getBasicProfile()
+
+      // the response property seems to always change,
+      // so convert to array and use index to fetch name, email, and avatar
+      const userInfoArr = Object.values(userInfo)
 
       const user = {
-        name: googleRes.Tt.Bd,
-        email: googleRes.Tt.Du,
-        avatar: googleRes.Tt.SK
+        name: userInfoArr[1],
+        email: userInfoArr[5],
+        avatar: userInfoArr[4]
       }
 
       const response = await this.$store.dispatch('login', user)
@@ -114,31 +215,40 @@ export default {
     submitUsername(user) {
       this.$socket.emit('SUBMIT_USER_DETAILS', user)
     },
-    challengeUser(opponentDetails) {
-      if(!this.isLoggedIn){
+    challengeUser(randomCategory) {
+      if (!this.isLoggedIn) {
         new Noty({
           // theme: this.$colorMode.value === 'light' ? 'relax' : 'sunset',
           type: 'error',
-          text: "You need to login first. ",
+          text: 'You need to login first. ',
           timeout: 1500
         }).show()
-        return;
-      }else if(this.isInAGame){
-         new Noty({
+        return
+      } else if (this.isInAGame) {
+        new Noty({
           // theme: this.$colorMode.value === 'light' ? 'relax' : 'sunset',
           type: 'error',
-          text: "Please finish the current game to start a new one.",
+          text: 'Please finish the current game to start a new one.',
           timeout: 1500
         }).show()
-        return;
+        return
       }
 
-      if (opponentDetails.email !== this.user.email) {
+      if (this.opponentToChallenge.email !== this.user.email) {
+        this.randomCategory = randomCategory
+        if (randomCategory) {
+          this.gameOptions.category._id = null
+        }
         this.$socket.emit('CHALLENGE_USER', {
           challengedBy: this.user,
-          challengedTo: opponentDetails
+          challengedTo: this.opponentToChallenge,
+          gameOptions: {
+            randomCategory,
+            categoryId: this.gameOptions.category._id
+          }
         })
-      }else {
+        this.showChooseGameOptionsModal = false
+      } else {
         new Noty({
           // theme: this.$colorMode.value === 'light' ? 'relax' : 'sunset',
           type: 'error',
@@ -157,6 +267,10 @@ export default {
           opponent: {
             socketId: opponentDetails.socketId,
             ...opponentDetails
+          },
+          gameOptions: {
+            randomCategory: this.randomCategory,
+            categoryId: this.gameOptions.category._id
           }
         })
       } else {
@@ -273,8 +387,21 @@ export default {
     }
   },
   mounted() {
-    if (this.isLoggedIn) {
+    if (this.isLoggedIn && this.user.name) {
       this.submitUsername(this.user)
+    }
+
+    this.fetchCategories()
+    const that = this
+    document.onkeydown = function(evt) {
+      evt = evt || window.event
+      var isEscape = false
+      if ('key' in evt) {
+        isEscape = evt.key === 'Escape' || evt.key === 'Esc'
+      } else {
+        isEscape = evt.keyCode === 27
+      }
+      that.showChooseGameOptionsModal = false
     }
   }
 }
