@@ -71,12 +71,12 @@
             Random Category
           </button>
         </div>
-        <buton
+        <button
           class="text-sm cursor-pointer dark:text-white"
           @click="showChooseGameOptionsModal = false"
         >
-          Close</buton
-        >
+          Close
+        </button>
       </div>
     </div>
   </div>
@@ -138,6 +138,16 @@ export default {
       this.gameOptions.category = selectedCategory[0]
     },
     chooseGameOptions(user) {
+      if (user.email === this.user.email) {
+        new Noty({
+          // theme: this.$colorMode.value === 'light' ? 'relax' : 'sunset',
+          type: 'error',
+          text: "Uhh... You can't challenge yourself. ",
+          timeout: 1500
+        }).show()
+        return false
+      }
+
       this.opponentToChallenge = user
       this.showChooseGameOptionsModal = true
     },
@@ -244,7 +254,7 @@ export default {
           challengedTo: this.opponentToChallenge,
           gameOptions: {
             randomCategory,
-            categoryId: this.gameOptions.category._id
+            categoryId: this.gameOptions.category._id || null
           }
         })
         this.showChooseGameOptionsModal = false
