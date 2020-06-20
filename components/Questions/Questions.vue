@@ -7,59 +7,75 @@
       <div class="w-full flex justify-between items-center">
         <h2
           class="rounded bg-gray-700 dark:bg-gray-900 dark:text-gray-300 px-2 text-white"
-        >{{gameQuestion.categoryId.name}}</h2>
-        <p>{{answerCountdown}}</p>
+        >
+          {{ gameQuestion.categoryId.name }}
+        </h2>
+        <p>{{ answerCountdown }}</p>
       </div>
       <div class="mt-6 w-full">
         <div class="text-center">
-          <h3 class="text-2xl font-bold">{{gameQuestion.title}}</h3>
+          <h3 class="text-2xl font-bold">{{ gameQuestion.title }}</h3>
           <div class="mt-12 grid grid-cols-12 row-gap-10 col-gap-8">
             <p
               @click="selectOption(option, index)"
-              :class="[(selectOptionIndex === index && selectedOption === correctAnswer) ? selectedOptionCSS : 'bg-gray-300', `option${index}`, `answer${index}`]"
+              :class="[
+                selectOptionIndex === index && selectedOption === correctAnswer
+                  ? selectedOptionCSS
+                  : 'bg-gray-300',
+                `option${index}`,
+                `answer${index}`
+              ]"
               class="text-lg col-span-6 bg-gray-200 px-2 py-3 rounded cursor-pointer transition-all duration-75 dark:bg-gray-900 dark-hover:bg-gray-800 dark:text-gray-300"
-              v-for="(option,index) in gameQuestion.options"
+              v-for="(option, index) in gameQuestion.options"
               :key="option"
-            >{{option}}</p>
+            >
+              {{ option }}
+            </p>
           </div>
         </div>
       </div>
     </div>
-    <div v-else-if="!gameStarting && countdown>0">
-      <p>Game starting in {{countdown}} seconds.</p>
+    <div v-else-if="!gameStarting && countdown > 0">
+      <p>Game starting in {{ countdown }} seconds.</p>
     </div>
     <div v-else>
       <p>Click on a user to start the game.</p>
     </div>
 
-    <div class="round-alert rounded-md text-center shadow-lg  dark:bg-gray-900 dark:text-gray-300 bg-white w-6/12 mx-auto px-8 py-12">
-      <h2 v-if="miscGameDetails" class="text-4xl font-bold text-gray-800 dark:text-white">Round {{miscGameDetails.questionIndex.index + 1}}</h2>
+    <div
+      class="round-alert rounded-md text-center shadow-lg  dark:bg-gray-900 dark:text-gray-300 bg-white w-6/12 mx-auto px-8 py-12"
+    >
+      <h2
+        v-if="miscGameDetails"
+        class="text-4xl font-bold text-gray-800 dark:text-white"
+      >
+        Round {{ miscGameDetails.questionIndex.index + 1 }}
+      </h2>
     </div>
   </div>
 </template>
 
-
 <style scoped>
-.round-alert{
-  position:absolute;
+.round-alert {
+  position: absolute;
   top: 50%;
   left: 50%;
-  transform: translate(-50%,-50%);
+  transform: translate(-50%, -50%);
   opacity: 0;
 }
 
-.fade-in{
+.fade-in {
   animation: fade 2s ease-in-out;
 }
 
-@keyframes fade{
-  0%{
+@keyframes fade {
+  0% {
     opacity: 0;
   }
-  40%{
+  40% {
     opacity: 1;
   }
-  100%{
+  100% {
     opacity: 0;
   }
 }
@@ -75,9 +91,6 @@ import 'noty/lib/noty.css'
 // import 'noty/lib/themes/sunset.css'
 // import 'noty/lib/themes/light.css'
 
-
-
-
 export default {
   data() {
     return {
@@ -92,32 +105,42 @@ export default {
       alreadyClicked: false,
       correctAnswer: '',
       answerCountdownTimeout: null,
-      roundAlertDiv:null
+      roundAlertDiv: null
     }
   },
   computed: {
     // 'gameQuestion',
-    ...mapGetters(['user', 'roomName', 'playerStatistics', 'miscGameDetails', 'isInAGame'])
+    ...mapGetters([
+      'user',
+      'roomName',
+      'playerStatistics',
+      'miscGameDetails',
+      'isInAGame'
+    ])
   },
   methods: {
-    showRound(){
-      this.roundAlertDiv.classList.add('fade-in');
-      setTimeout(()=>{
-      this.roundAlertDiv.classList.remove('fade-in');
-      },2000)
+    showRound() {
+      this.roundAlertDiv.classList.add('fade-in')
+      setTimeout(() => {
+        this.roundAlertDiv.classList.remove('fade-in')
+      }, 2000)
     },
     selectOption(option, index) {
       // make it so that user can't choose multiple options, multiple times for same question
       if (!this.alreadyClicked) {
-        if(option !== this.correctAnswer){
+        if (option !== this.correctAnswer) {
           // note
           // if done by giving the correct answer a certain class and using document.querySelector,
           // one can easily find out the answer by inspecting the element and finding the option with the class of correctAnswer
-          const correctAnswerIndex = this.gameQuestion.options.findIndex(opt=>opt === this.correctAnswer)
-          document.querySelector( `.option${index}`).classList.add("bg-red-400");
-           // in case the options does not contain the answer; server should prevent it; but, just in case
-          if(correctAnswerIndex!==-1)        
-            document.querySelector(`.answer${correctAnswerIndex}`).classList.add('bg-green-600');
+          const correctAnswerIndex = this.gameQuestion.options.findIndex(
+            opt => opt === this.correctAnswer
+          )
+          document.querySelector(`.option${index}`).classList.add('bg-red-400')
+          // in case the options does not contain the answer; server should prevent it; but, just in case
+          if (correctAnswerIndex !== -1)
+            document
+              .querySelector(`.answer${correctAnswerIndex}`)
+              .classList.add('bg-green-600')
         }
         this.selectedOption = option
         this.selectOptionIndex = index
@@ -130,9 +153,22 @@ export default {
         this.activeQuestionIndex++
       }
       this.alreadyClicked = true
+    },
+    resetGame() {
+      this.answerCountdown = 0
+      clearTimeout(this.answerCountdownTimeout)
     }
   },
   sockets: {
+    OPPONENT_LEFT(data) {
+      new Noty({
+        type: 'info',
+        text: data.message,
+        timeout: 1500
+      }).show()
+      this.$store.commit('resetGame')
+      this.gameQuestion = null
+    },
     GAME_QUESTIONS(question) {
       this.correctAnswer = question.answer
       this.gameQuestion = question
@@ -141,7 +177,6 @@ export default {
       this.answerCountdown = 17
       this.answerCountdown--
       this.showRound()
-
     },
     GAME_IN_SECONDS(data) {
       this.gameStarting = true
@@ -177,8 +212,9 @@ export default {
 
       this.$store.commit('setMiscGameDetails', data.miscDetails)
     },
-    GAME_OVER(gameRoomDetails) {
-      this.$store.commit('setMiscGameDetails', gameRoomDetails.miscDetails)
+    GAME_OVER(roomInfo) {
+      this.$store.commit('setMiscGameDetails', roomInfo.miscDetails)
+      this.activeQuestionIndex = 0
     }
   },
   watch: {
@@ -225,7 +261,6 @@ export default {
         }
       }
     }
-  },
+  }
 }
 </script>
-

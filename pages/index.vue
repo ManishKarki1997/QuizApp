@@ -32,7 +32,13 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['opponentDetails', 'miscGameDetails', 'roomName', 'user'])
+    ...mapGetters([
+      'opponentDetails',
+      'miscGameDetails',
+      'roomName',
+      'user',
+      'lastGameOptions'
+    ])
   },
 
   methods: {
@@ -45,8 +51,10 @@ export default {
         opponent: {
           socketId: this.opponentDetails.socketId,
           ...this.opponentDetails
-        }
+        },
+        gameOptions: this.lastGameOptions
       })
+      this.$store.commit('setGameQuestions', null)
       this.$store.commit('setIsInAGame', true)
     },
     leaveGame() {
@@ -57,7 +65,6 @@ export default {
       })
       this.$socket.emit('PLAYER_LEFT_THE_GAME', this.roomName)
       this.$store.commit('setIsInAGame', false)
-
     }
   }
 }

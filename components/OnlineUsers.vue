@@ -257,6 +257,10 @@ export default {
             categoryId: this.gameOptions.category._id || null
           }
         })
+        this.$store.commit('setLastGameOptions', {
+          randomCategory,
+          categoryId: this.gameOptions.category._id || null
+        })
         this.showChooseGameOptionsModal = false
       } else {
         new Noty({
