@@ -2,6 +2,7 @@
   <div class="flex h-screen px-6 py-6 w-full overflow-hidden">
     <OnlineUsers class="flex-grow-0" />
     <Questions class="flex-1" />
+    <!-- <Emojis class="w-2/6" /> -->
     <GameReport class="flex-grow-0" v-if="opponentDetails" />
     <GameOverModal
       @leaveGame="leaveGame"
@@ -16,6 +17,7 @@ import OnlineUsers from '~/components/OnlineUsers'
 import Questions from '~/components/Questions/Questions'
 import GameReport from '~/components/GameReport'
 import GameOverModal from '~/components/GameOverModal'
+import Emojis from '~/components/Emojis'
 
 import { mapGetters } from 'vuex'
 
@@ -24,7 +26,8 @@ export default {
     OnlineUsers,
     Questions,
     GameReport,
-    GameOverModal
+    GameOverModal,
+    Emojis
   },
   data() {
     return {
