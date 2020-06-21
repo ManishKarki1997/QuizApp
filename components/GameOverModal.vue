@@ -5,7 +5,7 @@
     v-if="miscGameDetails"
   >
     <h2
-      v-if="miscGameDetails.gameDraw"
+      v-if="miscGameDetails.gameDraw && !miscGameDetails.gameWonBy"
       class="text-center text-teal-600 font-bold text-4xl mb-2"
     >
       Draw
@@ -21,7 +21,7 @@
     <h2
       v-else-if="
         !miscGameDetails.gameDraw &&
-          miscGameDetails.gameWonBy.email &&
+          miscGameDetails.gameWonBy &&
           miscGameDetails.gameWonBy.email === user.email
       "
       class="text-center text-teal-600 font-bold text-4xl mb-2"
@@ -29,7 +29,14 @@
       You Won
     </h2>
 
-    <h2 v-else class="text-center text-teal-600 font-bold text-4xl mb-2">
+    <h2
+      v-else-if="
+        !miscGameDetails.gameDraw &&
+          miscGameDetails.gameWonBy &&
+          miscGameDetails.gameWonBy.email !== user.email
+      "
+      class="text-center text-teal-600 font-bold text-4xl mb-2"
+    >
       You Lost
     </h2>
 

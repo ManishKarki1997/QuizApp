@@ -19,6 +19,9 @@ import GameReport from '~/components/GameReport'
 import GameOverModal from '~/components/GameOverModal'
 import Emojis from '~/components/Emojis'
 
+import Noty from 'noty'
+import 'noty/lib/noty.css'
+
 import { mapGetters } from 'vuex'
 
 export default {
@@ -46,17 +49,22 @@ export default {
 
   methods: {
     rematch() {
-      this.$socket.emit('START_GAME', {
-        challenger: {
+      this.$socket.emit('CHALLENGE_USER', {
+        challengedBy: {
           socketId: this.userSocketId,
           ...this.user
         },
-        opponent: {
+        challengedTo: {
           socketId: this.opponentDetails.socketId,
           ...this.opponentDetails
         },
         gameOptions: this.lastGameOptions
       })
+      new Noty({
+        type: 'info',
+        text: 'Challenging your opponent...',
+        timeout: 1500
+      }).show()
       this.$store.commit('setGameQuestions', null)
       this.$store.commit('setIsInAGame', true)
     },

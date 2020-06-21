@@ -179,6 +179,9 @@ export default {
       this.showRound()
     },
     GAME_IN_SECONDS(data) {
+      this.correctAnswer = ''
+      this.selectedOption = ''
+      this.selectOptionIndex = ''
       this.gameStarting = true
       this.countdown = data.gameCountdown
       this.countdown--
@@ -213,6 +216,7 @@ export default {
       this.$store.commit('setMiscGameDetails', data.miscDetails)
     },
     GAME_OVER(roomInfo) {
+      console.log(roomInfo)
       this.$store.commit('setMiscGameDetails', roomInfo.miscDetails)
       this.activeQuestionIndex = 0
     }

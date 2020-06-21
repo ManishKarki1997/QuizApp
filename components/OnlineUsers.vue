@@ -257,6 +257,12 @@ export default {
             categoryId: this.gameOptions.category._id || null
           }
         })
+        new Noty({
+          type: 'info',
+          text: 'Challenging your opponent...',
+          timeout: 1500
+        }).show()
+
         this.$store.commit('setLastGameOptions', {
           randomCategory,
           categoryId: this.gameOptions.category._id || null
